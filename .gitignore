@@ -1,0 +1,6 @@
+conn2res-master/venv_mosca/
+*.jsonl
+*.csv
+paper_trading_state.json
+__pycache__/
+*.pyc
