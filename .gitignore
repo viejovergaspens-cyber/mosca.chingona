@@ -4,3 +4,5 @@ conn2res-master/venv_mosca/
 paper_trading_state.json
 __pycache__/
 *.pyc
+.DS_Store
+*.log
