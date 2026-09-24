@@ -1,0 +1,111 @@
+Descargando 90 dias de historia de solana (CoinGecko)...
+Puntos historicos: 2161
+Cargando el conectoma compartido de la mosca...
+
+Entrenando la colmena (5 moscas)...
+  Mosca #0 (seed=42): precision individual en test = 52.0%
+  Mosca #1 (seed=43): precision individual en test = 51.4%
+  Mosca #2 (seed=44): precision individual en test = 52.0%
+  Mosca #3 (seed=45): precision individual en test = 53.5%
+  Mosca #4 (seed=46): precision individual en test = 52.5%
+
+Promedio individual de las moscas: 52.3%
+COLMENA (voto mayoritario):         52.2%
+Linea base:                          51.7%
+-> Esta vez el voto no mejoro sobre el promedio individual (puede pasar con pocas moscas).
+(Este backtest es solo informativo. El paper trading en vivo mide el desempeno real.)
+
+  [aviso] no se pudo retomar el estado guardado ('x_list'). Arranco de cero.
+No hay estado previo (o no es compatible). Arrancando con $1000.00 ficticios.
+
+Arrancando paper trading en vivo con colmena de 5 moscas. Chequeo cada 15 minutos. Ctrl+C para cortar (el progreso queda guardado en paper_trading_state.json).
+
+[2026-09-23T06:21:18.213322+00:00] precio=$118.7700  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$1000.00  buy&hold=$1001.31
+[2026-09-23T06:36:18.520321+00:00] precio=$118.7200  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$999.58  buy&hold=$1000.89
+[2026-09-23T06:51:18.808476+00:00] precio=$119.0100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$999.58  buy&hold=$1003.33
+[2026-09-23T07:06:19.118700+00:00] precio=$118.8300  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$999.58  buy&hold=$1001.81
+[2026-09-23T07:21:19.425713+00:00] precio=$119.0000  votos=1/5 sube  colmena=baja  accion=hold  portfolio=$999.58  buy&hold=$1003.25
+[2026-09-23T07:36:19.717080+00:00] precio=$118.5500  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$999.58  buy&hold=$999.45
+[2026-09-23T07:51:19.999061+00:00] precio=$117.8500  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$999.58  buy&hold=$993.55
+[2026-09-23T08:06:20.297357+00:00] precio=$117.8700  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$999.75  buy&hold=$993.72
+[2026-09-23T08:21:20.600649+00:00] precio=$118.0700  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$1001.45  buy&hold=$995.41
+[2026-09-23T08:36:20.900460+00:00] precio=$118.0100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$1001.45  buy&hold=$994.90
+[2026-09-23T08:51:21.199334+00:00] precio=$117.7400  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$1001.45  buy&hold=$992.62
+[2026-09-23T09:06:21.487320+00:00] precio=$117.3600  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$998.21  buy&hold=$989.42
+[2026-09-23T09:21:21.781919+00:00] precio=$117.4500  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$998.98  buy&hold=$990.18
+[2026-09-23T09:36:22.077618+00:00] precio=$117.3900  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$998.47  buy&hold=$989.67
+[2026-09-23T09:51:22.385367+00:00] precio=$117.3600  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$998.47  buy&hold=$989.42
+[2026-09-23T10:06:22.696179+00:00] precio=$117.4800  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$999.49  buy&hold=$990.43
+[2026-09-23T10:21:22.980350+00:00] precio=$117.4000  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$999.49  buy&hold=$989.76
+[2026-09-23T10:36:23.293202+00:00] precio=$117.0700  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$999.49  buy&hold=$986.98
+[2026-09-23T10:51:23.584842+00:00] precio=$117.4800  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$1002.99  buy&hold=$990.43
+[2026-09-23T11:06:23.881307+00:00] precio=$117.4100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$1002.99  buy&hold=$989.84
+[2026-09-23T11:21:24.175444+00:00] precio=$117.1700  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$1002.99  buy&hold=$987.82
+[2026-09-23T11:36:24.488614+00:00] precio=$116.6100  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$998.20  buy&hold=$983.10
+[2026-09-23T11:51:24.807285+00:00] precio=$116.9000  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$1000.68  buy&hold=$985.54
+[2026-09-23T12:06:25.101329+00:00] precio=$116.7900  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$999.74  buy&hold=$984.61
+[2026-09-23T12:21:25.394847+00:00] precio=$116.6600  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$999.74  buy&hold=$983.52
+[2026-09-23T12:36:25.672549+00:00] precio=$117.0600  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$1003.16  buy&hold=$986.89
+[2026-09-23T12:51:25.969008+00:00] precio=$116.9400  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$1003.16  buy&hold=$985.88
+[2026-09-23T13:06:26.269278+00:00] precio=$116.6700  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$1003.16  buy&hold=$983.60
+[2026-09-23T13:21:26.561437+00:00] precio=$116.3600  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$1000.50  buy&hold=$980.99
+[2026-09-23T13:36:26.860595+00:00] precio=$116.8000  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$1004.28  buy&hold=$984.70
+[2026-09-23T13:51:27.207330+00:00] precio=$116.7100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$1004.28  buy&hold=$983.94
+[2026-09-23T14:06:27.514403+00:00] precio=$116.6100  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$1004.28  buy&hold=$983.10
+[2026-09-23T14:21:27.815972+00:00] precio=$113.5700  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$978.10  buy&hold=$957.47
+[2026-09-23T14:36:28.132563+00:00] precio=$114.0600  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$982.32  buy&hold=$961.60
+[2026-09-23T14:51:28.426928+00:00] precio=$114.3400  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$984.73  buy&hold=$963.96
+[2026-09-23T15:06:28.740277+00:00] precio=$115.2200  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$984.73  buy&hold=$971.38
+[2026-09-23T15:21:29.043775+00:00] precio=$115.7800  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$984.73  buy&hold=$976.10
+[2026-09-23T15:36:29.363635+00:00] precio=$114.7300  votos=1/5 sube  colmena=baja  accion=hold  portfolio=$984.73  buy&hold=$967.25
+[2026-09-23T15:51:29.669144+00:00] precio=$114.0800  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$984.73  buy&hold=$961.77
+[2026-09-23T16:06:29.964301+00:00] precio=$113.4400  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$979.21  buy&hold=$956.37
+[2026-09-23T16:21:30.254514+00:00] precio=$114.8700  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$991.55  buy&hold=$968.43
+[2026-09-23T16:36:30.546041+00:00] precio=$114.7600  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$990.60  buy&hold=$967.50
+[2026-09-23T16:51:30.839520+00:00] precio=$114.2200  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$990.60  buy&hold=$962.95
+[2026-09-23T17:06:31.132251+00:00] precio=$114.4600  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$992.68  buy&hold=$964.97
+[2026-09-23T17:21:31.424439+00:00] precio=$114.1900  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$992.68  buy&hold=$962.69
+[2026-09-23T17:36:31.715485+00:00] precio=$114.3000  votos=1/5 sube  colmena=baja  accion=hold  portfolio=$992.68  buy&hold=$963.62
+[2026-09-23T17:51:31.998953+00:00] precio=$114.6700  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$992.68  buy&hold=$966.74
+[2026-09-23T18:06:32.312880+00:00] precio=$114.1700  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$992.68  buy&hold=$962.53
+[2026-09-23T18:21:32.606503+00:00] precio=$114.1100  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$992.68  buy&hold=$962.02
+[2026-09-23T18:36:32.922411+00:00] precio=$114.0200  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$991.90  buy&hold=$961.26
+[2026-09-23T18:51:33.209938+00:00] precio=$114.3200  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.90  buy&hold=$963.79
+[2026-09-23T19:06:33.529087+00:00] precio=$114.2700  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.90  buy&hold=$963.37
+[2026-09-23T19:21:33.825006+00:00] precio=$114.2400  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$991.90  buy&hold=$963.12
+[2026-09-23T19:36:34.120812+00:00] precio=$114.5600  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$994.68  buy&hold=$965.81
+[2026-09-23T19:51:34.409029+00:00] precio=$114.7700  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$994.68  buy&hold=$967.58
+[2026-09-23T20:06:34.700321+00:00] precio=$114.2700  votos=1/5 sube  colmena=baja  accion=hold  portfolio=$994.68  buy&hold=$963.37
+[2026-09-23T20:21:34.987661+00:00] precio=$114.3700  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$994.68  buy&hold=$964.21
+[2026-09-23T20:36:35.286208+00:00] precio=$114.2000  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$993.20  buy&hold=$962.78
+[2026-09-23T20:51:35.574852+00:00] precio=$114.2300  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$993.20  buy&hold=$963.03
+[2026-09-23T21:06:35.876358+00:00] precio=$114.0900  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$991.98  buy&hold=$961.85
+[2026-09-23T21:21:36.172323+00:00] precio=$114.2200  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$962.95
+[2026-09-23T21:36:36.483327+00:00] precio=$114.3500  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$964.04
+[2026-09-23T21:51:36.772680+00:00] precio=$114.5300  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$965.56
+[2026-09-23T22:06:37.065953+00:00] precio=$114.7200  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$967.16
+[2026-09-23T22:21:37.359974+00:00] precio=$115.3100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$972.14
+[2026-09-23T22:36:37.655291+00:00] precio=$114.7900  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.98  buy&hold=$967.75
+[2026-09-23T22:51:37.944493+00:00] precio=$115.1400  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$991.98  buy&hold=$970.70
+[2026-09-23T23:06:38.237833+00:00] precio=$115.0300  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$991.04  buy&hold=$969.78
+[2026-09-23T23:21:38.651269+00:00] precio=$115.0100  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$991.04  buy&hold=$969.61
+[2026-09-23T23:36:39.081937+00:00] precio=$114.8700  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$989.83  buy&hold=$968.43
+[2026-09-23T23:51:39.380425+00:00] precio=$114.8800  votos=4/5 sube  colmena=sube  accion=buy  portfolio=$989.83  buy&hold=$968.51
+[2026-09-24T00:06:40.453524+00:00] precio=$115.0900  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$991.64  buy&hold=$970.28
+[2026-09-24T00:21:40.739603+00:00] precio=$115.3300  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.64  buy&hold=$972.31
+[2026-09-24T00:36:41.039773+00:00] precio=$115.3600  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$991.64  buy&hold=$972.56
+[2026-09-24T00:51:41.978268+00:00] precio=$114.9000  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$991.64  buy&hold=$968.68
+[2026-09-24T01:06:42.274758+00:00] precio=$115.2300  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$994.49  buy&hold=$971.46
+[2026-09-24T01:21:42.552930+00:00] precio=$115.1400  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$994.49  buy&hold=$970.70
+[2026-09-24T01:36:42.862725+00:00] precio=$115.2500  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$994.49  buy&hold=$971.63
+[2026-09-24T01:51:43.233112+00:00] precio=$114.7100  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$994.49  buy&hold=$967.08
+[2026-09-24T02:06:43.564327+00:00] precio=$114.5000  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$994.49  buy&hold=$965.31
+[2026-09-24T02:21:44.852229+00:00] precio=$114.9600  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$998.48  buy&hold=$969.19
+[2026-09-24T02:36:45.142484+00:00] precio=$114.9000  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$998.48  buy&hold=$968.68
+[2026-09-24T02:51:45.477617+00:00] precio=$115.3600  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$998.48  buy&hold=$972.56
+[2026-09-24T03:06:45.789824+00:00] precio=$115.5600  votos=0/5 sube  colmena=baja  accion=hold  portfolio=$998.48  buy&hold=$974.24
+[2026-09-24T03:21:46.075062+00:00] precio=$115.1800  votos=3/5 sube  colmena=sube  accion=buy  portfolio=$998.48  buy&hold=$971.04
+[2026-09-24T03:36:46.577953+00:00] precio=$114.6800  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$994.15  buy&hold=$966.83
+[2026-09-24T03:51:46.844400+00:00] precio=$114.6900  votos=5/5 sube  colmena=sube  accion=hold  portfolio=$994.23  buy&hold=$966.91
+[2026-09-24T04:06:48.521959+00:00] precio=$114.5400  votos=0/5 sube  colmena=baja  accion=sell  portfolio=$992.93  buy&hold=$965.65
+[2026-09-24T04:21:48.840180+00:00] precio=$114.5300  votos=5/5 sube  colmena=sube  accion=buy  portfolio=$992.93  buy&hold=$965.56
