@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Colmena — mosca.chingona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090c0e;
+    --panel: #10151a;
+    --panel-2: #141b21;
+    --line: #202a31;
+    --text: #d9e2e6;
+    --dim: #6c7a84;
+    --up: #6ee7c0;
+    --down: #ff6b5e;
+    --hold: #8a94a6;
+    --accent: #9ad9ff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+  }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1, h2, .display {
+    font-family: 'Space Grotesk', sans-serif;
+    margin: 0;
+  }
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-rows: 56px 1fr 200px;
+    grid-template-areas:
+      "header header"
+      "scene  log"
+      "brain  brain";
+    height: 100%;
+    width: 100%;
+  }
+  @media (max-width: 860px) {
+    #app {
+      grid-template-columns: 1fr;
+      grid-template-rows: 56px 45vh 30vh 1fr;
+      grid-template-areas:
+        "header"
+        "scene"
+        "log"
+        "brain";
+    }
+  }
+
+  header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--dim);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+  .brand-dot.live {
+    background: var(--up);
+    box-shadow: 0 0 8px var(--up);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+  .brand h1 { font-size: 15px; letter-spacing: .02em; font-weight: 500; }
+  .status-line { font-size: 11px; color: var(--dim); }
+  .price-pill {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  #scene-wrap {
+    grid-area: scene;
+    position: relative;
+    background: radial-gradient(circle at 50% 40%, #0d1215 0%, #07090b 70%);
+    border-right: 1px solid var(--line);
+  }
+  #scene-wrap canvas { display: block; }
+  .hive-readout {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    font-size: 12px;
+    color: var(--dim);
+    line-height: 1.6;
+    pointer-events: none;
+  }
+  .hive-readout .big {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .hive-readout .big.up { color: var(--up); }
+  .hive-readout .big.down { color: var(--down); }
+  .hive-readout .big.hold { color: var(--hold); }
+
+  #log {
+    grid-area: log;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #log h2 {
+    font-size: 11px;
+    text-transform: none;
+    color: var(--dim);
+    padding: 12px 14px 8px;
+    border-bottom: 1px solid var(--line);
+    font-weight: 500;
+    letter-spacing: .02em;
+  }
+  #log-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .log-row {
+    padding: 8px 14px;
+    border-bottom: 1px solid #161d22;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .log-row .t { color: var(--dim); font-size: 10px; }
+  .log-row .action { font-weight: 600; }
+  .log-row .action.buy { color: var(--up); }
+  .log-row .action.sell { color: var(--down); }
+  .log-row .action.hold { color: var(--hold); }
+  .log-row .pf { color: var(--dim); }
+
+  #brain {
+    grid-area: brain;
+    background: var(--panel-2);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #brain-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  #brain-head h2 {
+    font-size: 11px;
+    color: var(--dim);
+    font-weight: 500;
+    letter-spacing: .02em;
+  }
+  #fly-select {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  #brain-bars {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    padding: 14px 24px 16px;
+    overflow-x: auto;
+  }
+  .nt-bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 54px;
+  }
+  .nt-bar-track {
+    width: 26px;
+    height: 110px;
+    background: #0d1317;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .nt-bar-fill {
+    width: 100%;
+    background: linear-gradient(180deg, var(--accent), #4f8fa8);
+    transition: height 0.5s ease;
+  }
+  .nt-label { font-size: 10px; color: var(--dim); text-align: center; }
+  .nt-value { font-size: 10px; color: var(--text); }
+
+  .empty-note {
+    padding: 14px 16px;
+    font-size: 11.5px;
+    color: var(--dim);
+    line-height: 1.6;
+  }
+  .empty-note code { color: var(--accent); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="brand-dot" id="live-dot"></div>
+      <div>
+        <h1>colmena · mosca.chingona</h1>
+        <div class="status-line" id="status-line">conectando a Firestore…</div>
+      </div>
+    </div>
+    <div class="price-pill" id="price-pill">—</div>
+  </header>
+
+  <div id="scene-wrap">
+    <div class="hive-readout" id="hive-readout">
+      <div class="big hold" id="hive-signal-big">—</div>
+      <div id="hive-votes">esperando datos…</div>
+      <div id="hive-portfolio"></div>
+    </div>
+  </div>
+
+  <div id="log">
+    <h2>registro de la colmena</h2>
+    <div id="log-list"></div>
+  </div>
+
+  <div id="brain">
+    <div id="brain-head">
+      <h2>mapa cerebral · por neurotransmisor</h2>
+      <select id="fly-select">
+        <option value="0">mosca 0</option>
+        <option value="1">mosca 1</option>
+        <option value="2">mosca 2</option>
+        <option value="3">mosca 3</option>
+        <option value="4">mosca 4</option>
+      </select>
+    </div>
+    <div id="brain-bars">
+      <div class="empty-note">
+        Cargando <code>fly_neuron_metadata.csv</code> y actividad neuronal…
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- three.js (CDN, sin restriccion de CSP aca porque esto se aloja en GitHub Pages, no como artifact publicado de Claude) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getFirestore, collection, query, orderBy, limit, onSnapshot,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// ====== CONFIG ======
+// Pegado directo del "Registrar app" de Firebase Console.
+const firebaseConfig = {
+  apiKey: "AIzaSyDgXM_GyXYrCHrPX_9HFqKVykVQ63tBR9U",
+  authDomain: "mosquita-fda19.firebaseapp.com",
+  projectId: "mosquita-fda19",
+  storageBucket: "mosquita-fda19.firebasestorage.app",
+  messagingSenderId: "832110412322",
+  appId: "1:832110412322:web:32b76bfd65487269ed807b",
+};
+
+// Ruta al CSV de neurotransmisores. Se lee del propio repo de GitHub
+// (raw.githubusercontent.com) - AJUSTAR el usuario/repo si hace falta.
+const NEURON_METADATA_URL =
+  "https://raw.githubusercontent.com/viejovergaspens-cyber/mosca.chingona/main/fly_neuron_metadata.csv";
+
+const N_FLIES = 5;
+
+// ====== FIREBASE ======
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const liveDot = document.getElementById('live-dot');
+const statusLine = document.getElementById('status-line');
+const pricePill = document.getElementById('price-pill');
+const hiveSignalBig = document.getElementById('hive-signal-big');
+const hiveVotes = document.getElementById('hive-votes');
+const hivePortfolio = document.getElementById('hive-portfolio');
+const logList = document.getElementById('log-list');
+
+function setLive() {
+  liveDot.classList.add('live');
+  statusLine.textContent = 'en vivo · Firestore';
+}
+
+function fmtTime(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch { return iso; }
+}
+
+function actionClass(action) {
+  if (action === 'buy') return 'buy';
+  if (action === 'sell') return 'sell';
+  return 'hold';
+}
+
+let latestFlies = []; // ultimo array de moscas + actividad, para el mapa cerebral
+let latestHiveSignal = 'hold';
+
+// ---- trades: log en vivo + lectura de la colmena ----
+const tradesQ = query(collection(db, 'trades'), orderBy('timestamp_utc', 'desc'), limit(40));
+onSnapshot(tradesQ, (snap) => {
+  setLive();
+  const rows = [];
+  let first = true;
+  snap.forEach((doc) => {
+    const d = doc.data();
+    if (first) {
+      pricePill.textContent = '$' + Number(d.price_usd).toFixed(3);
+      hiveSignalBig.textContent = d.hive_signal === 'sube' ? '▲ SUBE' : d.hive_signal === 'baja' ? '▼ BAJA' : '· DIVIDIDO';
+      hiveSignalBig.className = 'big ' + (d.hive_signal === 'sube' ? 'up' : d.hive_signal === 'baja' ? 'down' : 'hold');
+      hiveVotes.textContent = `${d.votes_up}/${d.votes_total} moscas votaron sube`;
+      hivePortfolio.textContent = `portfolio $${Number(d.portfolio_value_usd).toFixed(2)} · buy&hold $${Number(d.buy_hold_value_usd).toFixed(2)}`;
+      latestHiveSignal = d.hive_signal === 'sube' ? 'up' : d.hive_signal === 'baja' ? 'down' : 'hold';
+      first = false;
+    }
+    rows.push(`
+      <div class="log-row">
+        <div class="t">${fmtTime(d.timestamp_utc)} · $${Number(d.price_usd).toFixed(3)}</div>
+        <span class="action ${actionClass(d.action)}">${d.action}</span>
+        · ${d.votes_up}/${d.votes_total} sube · ${d.hive_signal}
+        <div class="pf">portfolio $${Number(d.portfolio_value_usd).toFixed(2)} vs buy&hold $${Number(d.buy_hold_value_usd).toFixed(2)}</div>
+      </div>
+    `);
+  });
+  logList.innerHTML = rows.join('') || '<div class="empty-note">Todavia no hay ciclos registrados.</div>';
+}, (err) => {
+  statusLine.textContent = 'error leyendo trades: ' + err.message;
+});
+
+// ---- neuron_activity: para el 3D y el mapa cerebral ----
+const activityQ = query(collection(db, 'neuron_activity'), orderBy('timestamp_utc', 'desc'), limit(1));
+onSnapshot(activityQ, (snap) => {
+  snap.forEach((doc) => {
+    const d = doc.data();
+    try {
+      latestFlies = JSON.parse(d.flies_json);
+      updateBrainMap();
+      updateFlyIntensities();
+    } catch (e) {
+      console.error('no se pudo parsear flies_json', e);
+    }
+  });
+});
+
+// ====== MAPA CEREBRAL (agrupado por neurotransmisor) ======
+let neuronTypes = null; // array de nt_type por indice de neurona, mismo orden que "activity"
+
+async function loadNeuronMetadata() {
+  try {
+    const resp = await fetch(NEURON_METADATA_URL);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const text = await resp.text();
+    const lines = text.trim().split('\n');
+    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const ntIdx = header.indexOf('nt_type');
+    if (ntIdx === -1) throw new Error('no se encontro la columna nt_type');
+    neuronTypes = lines.slice(1).map(line => {
+      const cols = line.split(',');
+      const v = (cols[ntIdx] || '').trim();
+      return v || 'sin_dato';
+    });
+    document.getElementById('brain-bars').innerHTML = '';
+    updateBrainMap();
+  } catch (e) {
+    document.getElementById('brain-bars').innerHTML =
+      `<div class="empty-note">No se pudo cargar fly_neuron_metadata.csv (${e.message}).
+      Confirmá que el archivo está en la raíz del repo y es público.</div>`;
+  }
+}
+loadNeuronMetadata();
+
+document.getElementById('fly-select').addEventListener('change', updateBrainMap);
+
+function updateBrainMap() {
+  const bars = document.getElementById('brain-bars');
+  if (!neuronTypes || !latestFlies.length) return;
+
+  const flyIdx = Number(document.getElementById('fly-select').value);
+  const fly = latestFlies.find(f => f.fly_id === flyIdx);
+  if (!fly) return;
+
+  const activity = fly.activity;
+  const sums = {};
+  const counts = {};
+  const n = Math.min(activity.length, neuronTypes.length);
+  for (let i = 0; i < n; i++) {
+    const nt = neuronTypes[i];
+    sums[nt] = (sums[nt] || 0) + Math.abs(activity[i]);
+    counts[nt] = (counts[nt] || 0) + 1;
+  }
+  const avgs = Object.keys(sums).map(nt => ({ nt, avg: sums[nt] / counts[nt] }));
+  avgs.sort((a, b) => b.avg - a.avg);
+  const maxAvg = Math.max(...avgs.map(a => a.avg), 0.0001);
+
+  bars.innerHTML = avgs.map(({ nt, avg }) => `
+    <div class="nt-bar-group">
+      <div class="nt-bar-track">
+        <div class="nt-bar-fill" style="height:${Math.round((avg / maxAvg) * 100)}%"></div>
+      </div>
+      <div class="nt-value">${avg.toFixed(3)}</div>
+      <div class="nt-label">${nt}</div>
+    </div>
+  `).join('');
+}
+
+// ====== ESCENA 3D: 5 moscas ======
+const wrap = document.getElementById('scene-wrap');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+camera.position.set(0, 1.4, 7);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+wrap.appendChild(renderer.domElement);
+
+function resizeRenderer() {
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resizeRenderer();
+window.addEventListener('resize', resizeRenderer);
+
+// luz ambiente tenue + punto central
+scene.add(new THREE.AmbientLight(0x30404a, 1.2));
+const core = new THREE.PointLight(0x9ad9ff, 2, 20);
+core.position.set(0, 0, 0);
+scene.add(core);
+
+const colorUp = new THREE.Color(0x6ee7c0);
+const colorDown = new THREE.Color(0xff6b5e);
+const colorHold = new THREE.Color(0x8a94a6);
+
+const flies = [];
+for (let i = 0; i < N_FLIES; i++) {
+  const geo = new THREE.SphereGeometry(0.22, 24, 24);
+  const mat = new THREE.MeshStandardMaterial({
+    color: colorHold, emissive: colorHold, emissiveIntensity: 0.5, roughness: 0.4,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  const angle = (i / N_FLIES) * Math.PI * 2;
+  const radius = 2.6;
+  mesh.userData = {
+    baseAngle: angle,
+    radius,
+    speed: 0.12 + i * 0.015,
+    bob: Math.random() * Math.PI * 2,
+    intensity: 0.4,
+  };
+  scene.add(mesh);
+  flies.push(mesh);
+}
+
+// arrastrar para rotar camara, rueda para zoom
+let dragging = false, lastX = 0, lastY = 0, camTheta = 0, camPhi = 1.15, camDist = 7;
+wrap.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+window.addEventListener('pointerup', () => dragging = false);
+window.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  camTheta -= (e.clientX - lastX) * 0.006;
+  camPhi = Math.min(Math.max(camPhi - (e.clientY - lastY) * 0.006, 0.3), 2.6);
+  lastX = e.clientX; lastY = e.clientY;
+});
+wrap.addEventListener('wheel', (e) => {
+  camDist = Math.min(Math.max(camDist + e.deltaY * 0.003, 3), 14);
+  e.preventDefault();
+}, { passive: false });
+
+function updateFlyIntensities() {
+  if (!latestFlies.length) return;
+  flies.forEach((mesh, i) => {
+    const fly = latestFlies.find(f => f.fly_id === i);
+    if (!fly) return;
+    const meanAbs = fly.activity.reduce((s, v) => s + Math.abs(v), 0) / fly.activity.length;
+    mesh.userData.intensity = Math.min(meanAbs * 3, 1.5);
+  });
+}
+
+function applyHiveColor() {
+  const c = latestHiveSignal === 'up' ? colorUp : latestHiveSignal === 'down' ? colorDown : colorHold;
+  flies.forEach(mesh => {
+    mesh.material.color.lerp(c, 0.08);
+    mesh.material.emissive.lerp(c, 0.08);
+  });
+}
+
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+
+  camera.position.x = camDist * Math.sin(camPhi) * Math.sin(camTheta);
+  camera.position.z = camDist * Math.sin(camPhi) * Math.cos(camTheta);
+  camera.position.y = camDist * Math.cos(camPhi);
+  camera.lookAt(0, 0, 0);
+
+  flies.forEach((mesh) => {
+    const u = mesh.userData;
+    const angle = u.baseAngle + t * u.speed;
+    mesh.position.x = Math.cos(angle) * u.radius;
+    mesh.position.z = Math.sin(angle) * u.radius;
+    mesh.position.y = Math.sin(t * 0.7 + u.bob) * 0.4;
+    const pulse = 1 + Math.sin(t * 2 + u.bob) * 0.08 * (0.4 + u.intensity);
+    mesh.scale.setScalar(pulse);
+    mesh.material.emissiveIntensity = 0.35 + u.intensity * 0.5;
+  });
+
+  applyHiveColor();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
