@@ -1,2 +1,4 @@
+firebase-admin
+numpy
 requests
-python-dotenv
+scikit-learn
