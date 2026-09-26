@@ -137,15 +137,10 @@ def train():
 
         flies_doc[f"fly_{i}"] = {
             "seed": seed,
-            # Guardados como texto JSON (no como array de Firestore): un
-            # array de Firestore indexa cada numero por separado, y con
-            # 2000 numeros x 5 moscas eso se pasa del limite de indices
-            # que permite un documento. Como texto, cuenta como UN solo
-            # campo indexado, sin importar cuantos numeros tenga adentro.
-            "coef_json": json.dumps(readout.coef_.tolist()),
+            "coef": readout.coef_.tolist(),
             "intercept": float(readout.intercept_),
             "test_acc": acc,
-            "warmed_x_json": json.dumps(warmed_x.tolist()),
+            "warmed_x": warmed_x.tolist(),
         }
 
     db.collection("model").document("hive").set({
@@ -162,9 +157,7 @@ def train():
         "position_sol": 0.0,
         "last_price": float(prices[-1]),
         "buy_hold_sol": STARTING_BALANCE_USD / float(prices[-1]),
-        "x_list_json": json.dumps([
-            json.loads(flies_doc[f"fly_{i}"]["warmed_x_json"]) for i in range(N_FLIES)
-        ]),
+        "x_list": [flies_doc[f"fly_{i}"]["warmed_x"] for i in range(N_FLIES)],
     })
     print("Listo. Modelo y estado inicial guardados en Firestore.")
 
@@ -194,18 +187,15 @@ def cycle():
     raw_return = (price - state["last_price"]) / state["last_price"]
     norm_return = (raw_return - model["ret_mean"]) / model["ret_std"]
 
-    x_list = json.loads(state["x_list_json"])
-
     votes = []
     new_x_list = []
     for i in range(N_FLIES):
         fly = model["flies"][f"fly_{i}"]
         W_in = build_fly_win(fly["seed"], n_neurons)
-        x = np.array(x_list[i])
+        x = np.array(state["x_list"][i])
         x_new = step_reservoir(W, W_in, x, norm_return)
         new_x_list.append(x_new.tolist())
-        coef = json.loads(fly["coef_json"])
-        pred = float(np.dot(x_new, coef) + fly["intercept"])
+        pred = float(np.dot(x_new, fly["coef"]) + fly["intercept"])
         votes.append(1 if pred > 0.5 else 0)
 
     votes_up = sum(votes)
@@ -238,7 +228,7 @@ def cycle():
         "position_sol": position_sol,
         "last_price": price,
         "buy_hold_sol": state["buy_hold_sol"],
-        "x_list_json": json.dumps(new_x_list),
+        "x_list": new_x_list,
     })
 
     db.collection("trades").add({
@@ -250,18 +240,13 @@ def cycle():
         "buy_hold_value_usd": buy_hold_value,
     })
 
-    # Toda la actividad neuronal de las 5 moscas va en UN solo campo de
-    # texto (flies_json), no como arrays anidados - el amigo que lea
-    # esto del lado del traductor/3D solo tiene que hacer JSON.parse()
-    # sobre ese campo para recuperar la lista de moscas y sus 2000
-    # numeros de actividad cada una.
     db.collection("neuron_activity").add({
         "timestamp_utc": ts,
         "price_usd": price,
-        "flies_json": json.dumps([
+        "flies": [
             {"fly_id": i, "activity": [round(v, 4) for v in new_x_list[i]]}
             for i in range(N_FLIES)
-        ]),
+        ],
     })
 
     result = {
