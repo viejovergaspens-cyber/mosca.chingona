@@ -96,6 +96,29 @@
     border-right: 1px solid var(--line);
   }
   #scene-wrap canvas { display: block; }
+  .hive-thought {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    right: 18px;
+    max-width: 560px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: rgba(16, 21, 26, 0.72);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .thought-dot {
+    color: var(--accent);
+    font-size: 9px;
+    margin-right: 2px;
+  }
   .hive-readout {
     position: absolute;
     left: 18px;
@@ -239,6 +262,9 @@
   </header>
 
   <div id="scene-wrap">
+    <div class="hive-thought" id="hive-thought">
+      <span class="thought-dot">●</span> <span id="thought-text">esperando el primer ciclo…</span>
+    </div>
     <div class="hive-readout" id="hive-readout">
       <div class="big hold" id="hive-signal-big">—</div>
       <div id="hive-votes">esperando datos…</div>
@@ -345,6 +371,8 @@ onSnapshot(tradesQ, (snap) => {
       hiveVotes.textContent = `${d.votes_up}/${d.votes_total} moscas votaron sube`;
       hivePortfolio.textContent = `portfolio $${Number(d.portfolio_value_usd).toFixed(2)} · buy&hold $${Number(d.buy_hold_value_usd).toFixed(2)}`;
       latestHiveSignal = d.hive_signal === 'sube' ? 'up' : d.hive_signal === 'baja' ? 'down' : 'hold';
+      lastTradeForThought = d;
+      renderThought();
       first = false;
     }
     rows.push(`
@@ -362,18 +390,77 @@ onSnapshot(tradesQ, (snap) => {
 });
 
 // ---- neuron_activity: para el 3D y el mapa cerebral ----
-const activityQ = query(collection(db, 'neuron_activity'), orderBy('timestamp_utc', 'desc'), limit(1));
-onSnapshot(activityQ, (snap) => {
-  snap.forEach((doc) => {
-    const d = doc.data();
-    try {
-      latestFlies = JSON.parse(d.flies_json);
-      updateBrainMap();
-      updateFlyIntensities();
-    } catch (e) {
-      console.error('no se pudo parsear flies_json', e);
+let lastTradeForThought = null;
+
+function ntAveragesAcrossHive(flies) {
+  // Promedio de |actividad| por neurotransmisor, combinando las 5 moscas.
+  if (!neuronTypes) return null;
+  const sums = {}, counts = {};
+  flies.forEach(fly => {
+    const n = Math.min(fly.activity.length, neuronTypes.length);
+    for (let i = 0; i < n; i++) {
+      const nt = neuronTypes[i];
+      sums[nt] = (sums[nt] || 0) + Math.abs(fly.activity[i]);
+      counts[nt] = (counts[nt] || 0) + 1;
     }
   });
+  const out = {};
+  Object.keys(sums).forEach(nt => out[nt] = sums[nt] / counts[nt]);
+  return out;
+}
+
+// Frases variadas para no sonar repetitivo ciclo tras ciclo.
+const ACTION_PHRASES = {
+  buy: ['entra a la posición', 'compra', 'decide meterse'],
+  sell: ['sale de la posición', 'vende', 'cierra la jugada'],
+  hold: ['se queda quieta', 'no mueve nada', 'espera sin actuar'],
+};
+
+function buildThought(trade, ntNow, ntPrev) {
+  if (!trade) return 'esperando el primer ciclo…';
+  const phrases = ACTION_PHRASES[trade.action] || ACTION_PHRASES.hold;
+  const phrase = phrases[Math.floor(Date.now() / 900000) % phrases.length];
+
+  let ntPart = '';
+  if (ntNow && ntPrev) {
+    const deltas = Object.keys(ntNow)
+      .filter(nt => nt !== 'sin_dato' && ntPrev[nt] !== undefined)
+      .map(nt => ({ nt, delta: ntNow[nt] - ntPrev[nt] }))
+      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    if (deltas.length) {
+      const top = deltas[0];
+      const dir = top.delta > 0 ? 'sube' : 'baja';
+      ntPart = ` — actividad de ${top.nt} ${dir} (${top.delta > 0 ? '+' : ''}${top.delta.toFixed(3)})`;
+    }
+  }
+
+  return `La colmena ${phrase} — ${trade.votes_up}/${trade.votes_total} moscas votaron ${trade.hive_signal}${ntPart}.`;
+}
+
+function renderThought() {
+  const el = document.getElementById('thought-text');
+  el.textContent = buildThought(lastTradeForThought, latestNtNow, latestNtPrev);
+}
+
+let latestNtNow = null, latestNtPrev = null;
+
+const activityQ = query(collection(db, 'neuron_activity'), orderBy('timestamp_utc', 'desc'), limit(2));
+onSnapshot(activityQ, (snap) => {
+  const docs = snap.docs.map(d => d.data());
+  if (!docs.length) return;
+  try {
+    latestFlies = JSON.parse(docs[0].flies_json);
+    updateBrainMap();
+    updateFlyIntensities();
+    latestNtNow = ntAveragesAcrossHive(latestFlies);
+    if (docs[1]) {
+      const prevFlies = JSON.parse(docs[1].flies_json);
+      latestNtPrev = ntAveragesAcrossHive(prevFlies);
+    }
+    renderThought();
+  } catch (e) {
+    console.error('no se pudo parsear flies_json', e);
+  }
 });
 
 // ====== MAPA CEREBRAL (agrupado por neurotransmisor) ======
